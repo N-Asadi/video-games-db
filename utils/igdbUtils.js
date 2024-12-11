@@ -11,7 +11,10 @@ export async function getIGDBToken() {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to obtain IGDB token");
+      const errorBody = await response.text();
+      throw new Error(
+        `Failed to obtain IGDB token. Status: ${response.status}, Body: ${errorBody}`
+      );
     }
 
     const data = await response.json();
@@ -24,22 +27,31 @@ export async function getIGDBToken() {
 
 export async function igdbFetch(token, query) {
   try {
+    console.log("IGDB Fetch - Query:", query); // Log the query being sent
+
     const response = await fetch("https://api.igdb.com/v4/games", {
       method: "POST",
       headers: {
         "Client-ID": CLIENT_ID,
         Authorization: `Bearer ${token}`,
+        "Content-Type": "text/plain",
       },
       body: query,
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch data from IGDB");
+      const errorBody = await response.text();
+      console.error("IGDB Fetch - Error Response:", errorBody); // Log the error response
+      throw new Error(
+        `Failed to fetch data from IGDB. Status: ${response.status}, Body: ${errorBody}`
+      );
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log("IGDB Fetch - Response:", data); // Log the successful response
+    return data;
   } catch (error) {
     console.error("Error fetching data from IGDB:", error);
-    return null;
+    throw error; // Re-throw the error to be handled in the API route
   }
 }

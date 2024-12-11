@@ -8,29 +8,29 @@ export async function GET() {
       throw new Error("Failed to retrieve IGDB token");
     }
 
-    // Calculate exact 2 months ago from current date
+    // Calculate exact 2 months from current date
     const now = new Date();
-    const twoMonthsAgo = new Date(
+    const twoMonthsLater = new Date(
       now.getFullYear(),
-      now.getMonth() - 2,
+      now.getMonth() + 2,
       now.getDate()
     );
 
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    const twoMonthsAgoTimestamp = Math.floor(twoMonthsAgo.getTime() / 1000);
+    const twoMonthsLaterTimestamp = Math.floor(twoMonthsLater.getTime() / 1000);
 
     console.log("Date range:", {
-      from: new Date(twoMonthsAgoTimestamp * 1000).toISOString(),
-      to: new Date(currentTimestamp * 1000).toISOString(),
+      from: new Date(currentTimestamp * 1000).toISOString(),
+      to: new Date(twoMonthsLaterTimestamp * 1000).toISOString(),
     });
 
     const query = `
       fields name, first_release_date, cover.url, rating, total_rating_count, genres.name, platforms.name;
-      where first_release_date >= ${twoMonthsAgoTimestamp}
-      & first_release_date <= ${currentTimestamp}
+      where first_release_date > ${currentTimestamp}
+      & first_release_date <= ${twoMonthsLaterTimestamp}
       & cover != null
       & platforms != null;
-      sort first_release_date desc;
+      sort first_release_date asc;
       limit 50;
     `;
 
@@ -42,7 +42,7 @@ export async function GET() {
 
     if (games.length === 0) {
       return NextResponse.json(
-        { message: "No recent games found" },
+        { message: "No upcoming games found" },
         { status: 404 }
       );
     }
@@ -66,7 +66,7 @@ export async function GET() {
 
     return NextResponse.json(formattedGames);
   } catch (error) {
-    console.error("Error in /api/games/recent:", error);
+    console.error("Error in /api/games/upcoming:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

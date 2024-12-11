@@ -8,29 +8,14 @@ export async function GET() {
       throw new Error("Failed to retrieve IGDB token");
     }
 
-    // Calculate exact 2 months ago from current date
-    const now = new Date();
-    const twoMonthsAgo = new Date(
-      now.getFullYear(),
-      now.getMonth() - 2,
-      now.getDate()
-    );
-
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    const twoMonthsAgoTimestamp = Math.floor(twoMonthsAgo.getTime() / 1000);
-
-    console.log("Date range:", {
-      from: new Date(twoMonthsAgoTimestamp * 1000).toISOString(),
-      to: new Date(currentTimestamp * 1000).toISOString(),
-    });
-
     const query = `
       fields name, first_release_date, cover.url, rating, total_rating_count, genres.name, platforms.name;
-      where first_release_date >= ${twoMonthsAgoTimestamp}
-      & first_release_date <= ${currentTimestamp}
-      & cover != null
-      & platforms != null;
-      sort first_release_date desc;
+      where rating >= 75
+        & total_rating_count >= 100
+        & genres != null
+        & platforms != null
+        & cover != null;
+      sort total_rating_count desc;
       limit 50;
     `;
 
@@ -42,7 +27,7 @@ export async function GET() {
 
     if (games.length === 0) {
       return NextResponse.json(
-        { message: "No recent games found" },
+        { message: "No top-rated games found" },
         { status: 404 }
       );
     }
@@ -50,11 +35,11 @@ export async function GET() {
     const formattedGames = games.map((game) => ({
       id: game.id,
       name: game.name,
-      releaseDate: new Date(
-        game.first_release_date * 1000
-      ).toLocaleDateString(),
+      releaseDate: game.first_release_date
+        ? new Date(game.first_release_date * 1000).toLocaleDateString()
+        : "TBA",
       coverUrl: game.cover
-        ? `https:${game.cover.url.replace("t_thumb", "t_cover_big")}`
+        ? `https:${game.cover.url.replace("t_thumb", "t_1080p")}`
         : null,
       rating: game.rating,
       totalRatings: game.total_rating_count,
@@ -66,7 +51,7 @@ export async function GET() {
 
     return NextResponse.json(formattedGames);
   } catch (error) {
-    console.error("Error in /api/games/recent:", error);
+    console.error("Error in /api/games/top-rated:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
