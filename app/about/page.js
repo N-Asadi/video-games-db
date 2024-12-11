@@ -8,12 +8,13 @@ export default function AboutPage() {
         About GameVerse
       </h1>
       <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center ">
           <div className="w-90 h-90 flex items-center justify-center">
-            <img
-              src="https://i.postimg.cc/ZnsfhhWT/Screenshot-2024-12-10-230156-processed.png"
+            <Image
+              src="/images/logo2.jpg"
               alt="GameVerse Logo"
-              className="h-1000 w-1000"
+              width={700}
+              height={700}
             />
           </div>
         </div>
@@ -26,8 +27,8 @@ export default function AboutPage() {
         <p className="text-xl mb-6 text-gray-700 dark:text-gray-300">
           Our mission is to create a hub where gamers can discover new titles,
           research their favorite games, and stay up-to-date with the
-          ever-evolving gaming industry. Whether you're a casual player or a
-          hardcore enthusiast, GameVerse has something for everyone.
+          ever-evolving gaming industry. Whether you&apos;re a casual player or
+          a hardcore enthusiast, GameVerse has something for everyone.
         </p>
         <h2 className="text-2xl font-semibold mb-4 text-purple-600 dark:text-purple-400">
           Key Features:
@@ -60,9 +61,9 @@ export default function AboutPage() {
         </ul>
         <p className="text-lg mb-6 text-gray-700 dark:text-gray-300">
           GameVerse is powered by the IGDB API, ensuring that our database is
-          always current and comprehensive. We're committed to providing the
-          best possible experience for gamers worldwide, and we're constantly
-          working on improving and expanding our platform.
+          always current and comprehensive. We&apos;re committed to providing
+          the best possible experience for gamers worldwide, and we&apos;re
+          constantly working on improving and expanding our platform.
         </p>
         <p className="text-lg text-gray-700 dark:text-gray-300">
           Thank you for choosing GameVerse as your go-to source for video game
